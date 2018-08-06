@@ -1,3 +1,4 @@
+
 const icons = [
     'fa-diamond', 'fa-paper-plane-o', 'fa-anchor', 'fa-bolt',
     'fa-cube', 'fa-leaf', 'fa-bicycle', 'fa-bomb'
@@ -5,30 +6,85 @@ const icons = [
 
 const cards = [...icons, ...icons];
 
-const deckElement = document.querySelector('.deck');
-// const cardElements = document.getElementsByClassName('card');
+const selectedCards = [];
 
-const cardElementsList = getCardElementsArray();
+/**
+ * @description Get cards HTMLCollection and convert to Array
+ * @returns {Array} collection of elements in the DOM containing class .card
+ */
+function getCardElementsArray() {
+    let cardsHtmlCollection = document.getElementsByClassName('card');
+    return cardsHtmlCollection ? Array.prototype.slice.call(cardsHtmlCollection) : null;
+}
 
-const openCards = [];
+/**
+ * @description Handles click events for the cards
+ * @param {object} event 
+ */
+function deckClickEventHandler(event) {
+    const { target } = event;
 
-deckElement.addEventListener('click', function (event) {
-    const element = event.target;
+    if (!isRevealed(target)) {
+        reveal(target);
 
-    if (!isRevealed(element)) {
-        reveal(element);
-
-        let index = cardElementsList.indexOf(element);
-        openCards.push(index);
+        let index = cardElementsList.indexOf(target);
+        selectedCards.push(index);
 
         checkForMatch();
     }
-});
+}
 
+/**
+ * @description Checks if card contains .open class, therefore, revealed
+ * @param {Element} card
+ */
+function isRevealed(card) {
+    return card.classList.contains('open');
+}
+
+/**
+ * @description Applies classes .open and .show to reveal the cards
+ * @param {Element} args The card elements to be revealed
+ */
+function reveal() {
+    for (let i = 0; i < arguments.length; i++) {
+        if (arguments[i] && arguments[i].classList) {
+            arguments[i].classList.add('open', 'show');
+        }
+    }
+}
+
+/**
+ * @description Removes classes .open and .show to hide the card elements
+ * @param {Element} args The card elements to be hidden
+ */
+function hide() {
+    for (let i = 0; i < arguments.length; i++) {
+        if (arguments[i] && arguments[i].classList) {
+            arguments[i].classList.remove('open', 'show');
+        }
+    }
+}
+
+/**
+ * @description Applies .match class for both card elements
+ * @param {Element} firstCard
+ * @param {Element} secondCard 
+ */
+function match(firstCard, secondCard) {
+    if (firstCard && firstCard.classList && secondCard && secondCard.classList) {
+        firstCard.classList.add('match');
+        secondCard.classList.add('match');
+    }
+}
+
+/**
+ * @description Checks if both card elements on selectedCards match
+ */
 function checkForMatch() {
-    if (openCards.length === 2) {
-        let idx1 = openCards[0];
-        let idx2 = openCards[1];
+    if (selectedCards.length === 2) {
+        let idx1 = selectedCards[0];
+        let idx2 = selectedCards[1];
 
         let card1 = cardElementsList[idx1];
         let card2 = cardElementsList[idx2];
@@ -38,41 +94,6 @@ function checkForMatch() {
         } else {
             hide(card1, card2);
         }
-    }
-}
-
-function isRevealed(card) {
-    return card.classList.contains('open');
-}
-
-function reveal() {
-    for (let i = 0; i < arguments.length; i++) {
-        if (arguments[i] && arguments[i].classList) {
-            arguments[i].classList.add('open', 'show');
-        }
-    }
-}
-
-function match(firstCard, secondCard) {
-    if (firstCard && firstCard.classList && secondCard && secondCard.classList) {
-        firstCard.classList.add('match');
-        secondCard.classList.add('match');
-    }
-}
-
-function hide() {
-    for (let i = 0; i < arguments.length; i++) {
-        if (arguments[i] && arguments[i].classList) {
-            arguments[i].classList.remove('open', 'show');
-        }
-    }
-}
-
-function buildCardElements() {
-    for (let i = 0; i < cardElementsList.length; i++) {
-        const iTag = document.createElement('i');
-        iTag.className = `fa ${cards[i]}`;
-        cardElementsList[i].appendChild(iTag);
     }
 }
 
@@ -98,10 +119,18 @@ function shuffle(array) {
     return array;
 }
 
-function getCardElementsArray() {
-    let cardsHtmlCollection = document.getElementsByClassName('card');
-    return cardsHtmlCollection ? Array.prototype.slice.call(cardsHtmlCollection) : null;
+/**
+ * @description Build card elements with an i tag
+ */
+function buildCardElements() {
+    for (let i = 0; i < cardElementsList.length; i++) {
+        const iTag = document.createElement('i');
+        iTag.className = `fa ${cards[i]}`;
+        cardElementsList[i].appendChild(iTag);
+    }
 }
+
+const cardElementsList = getCardElementsArray();
 
 /**
  * @description Initialize the game
@@ -109,6 +138,9 @@ function getCardElementsArray() {
 function init() {
     shuffle(cards);
     buildCardElements();
+
+    document.getElementById('deck')
+        .addEventListener('click', deckClickEventHandler);
 }
 
 init();

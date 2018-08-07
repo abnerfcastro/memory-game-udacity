@@ -19,7 +19,7 @@ function getCardElementsArray() {
 
 /**
  * @description Handles click events for the cards
- * @param {object} event 
+ * @param {object} event
  */
 function deckClickEventHandler(event) {
     const { target } = event;
@@ -104,7 +104,7 @@ function animate(element, animation, timeout) {
         if (timeout) {
             window.setTimeout(function() {
                 element.classList.remove(animation);
-            }, timeout)            
+            }, timeout)
         }
     }
 }
@@ -122,8 +122,8 @@ function checkForMatch() {
 
         if (cards[idx1] === cards[idx2]) {
             match(card1, card2, 'tada');
-        } else {                        
-            hide(card1, card2);            
+        } else {
+            hide(card1, card2);
         }
 
         selectedCards.splice(0, 2);
@@ -163,6 +163,19 @@ function buildCardElements() {
     }
 }
 
+/**
+ * @description Handles click events for restart button
+ */
+function restartButtonClickEventHandler() {
+    shuffle(cards);
+    cardElementsList.forEach((card, i) => {
+        card.className = 'card';
+        card.firstElementChild.className = `fa ${cards[i]}`;
+    });
+
+    selectedCards.splice(0, 2);
+}
+
 const cardElementsList = getCardElementsArray();
 
 /**
@@ -174,6 +187,9 @@ function init() {
 
     document.getElementById('deck')
         .addEventListener('click', deckClickEventHandler);
+
+    document.getElementById('restart__button')
+        .addEventListener('click', restartButtonClickEventHandler);
 }
 
 init();

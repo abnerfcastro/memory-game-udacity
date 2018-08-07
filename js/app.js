@@ -24,7 +24,7 @@ function getCardElementsArray() {
 function deckClickEventHandler(event) {
     const { target } = event;
 
-    if (!isRevealed(target)) {
+    if (target.nodeName === 'LI' && !isCardRevealed(target)) {
         reveal(target);
 
         let index = cardElementsList.indexOf(target);
@@ -38,7 +38,7 @@ function deckClickEventHandler(event) {
  * @description Checks if card contains .open class, therefore, revealed
  * @param {Element} card
  */
-function isRevealed(card) {
+function isCardRevealed(card) {
     return card.classList.contains('open');
 }
 

@@ -46,10 +46,10 @@ function isRevealed(card) {
  * @description Applies classes .open and .show to reveal the cards
  * @param {Element} args The card elements to be revealed
  */
-function reveal() {
-    for (let i = 0; i < arguments.length; i++) {
-        if (arguments[i] && arguments[i].classList) {
-            arguments[i].classList.add('open', 'show');
+function reveal(...elements) {
+    for (let i = 0; i < elements.length; i++) {
+        if (elements[i] && elements[i].classList) {
+            elements[i].classList.add('open', 'show');
         }
     }
 }
@@ -58,23 +58,54 @@ function reveal() {
  * @description Removes classes .open and .show to hide the card elements
  * @param {Element} args The card elements to be hidden
  */
-function hide() {
-    for (let i = 0; i < arguments.length; i++) {
-        if (arguments[i] && arguments[i].classList) {
-            arguments[i].classList.remove('open', 'show');
+function hide(...elements) {
+    elements.forEach(function(e) {
+        animate(e, 'shake');
+    });
+
+    window.setTimeout(function () {
+        for (let i = 0; i < elements.length; i++) {
+            if (elements[i] && elements[i].classList) {
+                elements[i].classList.remove('open', 'show', 'shake');
+            }
         }
-    }
+    }, 700);
 }
 
 /**
  * @description Applies .match class for both card elements
  * @param {Element} firstCard
- * @param {Element} secondCard 
+ * @param {Element} secondCard
+ * @param {string} animation the animation for the matching effect
  */
-function match(firstCard, secondCard) {
+function match(firstCard, secondCard, animation) {
     if (firstCard && firstCard.classList && secondCard && secondCard.classList) {
+        // when provided, run with animation
+        if (animation) {
+            animate(firstCard, animation, 1000);
+            animate(secondCard, animation, 1000);
+        }
+
         firstCard.classList.add('match');
         secondCard.classList.add('match');
+    }
+}
+
+/**
+ * @description Adds animation class to the element
+ * @param {Element} element element to be animated
+ * @param {string} animation css class containing the animation
+ * @param {int} timeout if provided, will set a timeout function to remove the class after elapsed timeout
+ */
+function animate(element, animation, timeout) {
+    if (element && element.classList) {
+        element.classList.add(animation);
+
+        if (timeout) {
+            window.setTimeout(function() {
+                element.classList.remove(animation);
+            }, timeout)            
+        }
     }
 }
 
@@ -90,10 +121,12 @@ function checkForMatch() {
         let card2 = cardElementsList[idx2];
 
         if (cards[idx1] === cards[idx2]) {
-            match(card1, card2);
-        } else {
-            hide(card1, card2);
+            match(card1, card2, 'tada');
+        } else {                        
+            hide(card1, card2);            
         }
+
+        selectedCards.splice(0, 2);
     }
 }
 

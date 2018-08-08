@@ -8,7 +8,16 @@ const deck = {
     cards: [...icons, ...icons],
     selected: [],
     matches: 0,
-    mismatches: 0
+    mismatches: 0,
+    reset: function() {
+        shuffle(this.cards);
+        this.matches = 0;
+        this.mismatches = 0;
+        this.clearSelection();
+    },
+    clearSelection: function() {
+        this.selected.splice(0, 2);
+    }
 }
 
 /**
@@ -114,7 +123,7 @@ function checkForMatch() {
             deck.mismatches++;
         }
 
-        deck.selected.splice(0, 2);
+        deck.clearSelection();
     }
 
     if (deck.matches === deck.cards.length / 2) {
@@ -174,17 +183,11 @@ function deckClickEventHandler(event) {
  * @description Handles click events for restart button
  */
 function reset() {
-    shuffle(deck.cards);
+    deck.reset();
     cardElementsList.forEach((card, i) => {
         card.className = 'card';
         card.firstElementChild.className = `fa ${deck.cards[i]}`;
     });
-
-    deck.selected.splice(0, 2);
-    deck.matches = 0;
-    deck.mismatches = 0;
-
-    // $('#victory-modal').modal();
 }
 
 const cardElementsList = getCardElementsArray();
@@ -193,7 +196,7 @@ const cardElementsList = getCardElementsArray();
  * @description Initialize the game
  */
 function init() {
-    shuffle(deck.cards);
+    deck.reset();
     buildCardElements();
 
     document.getElementById('deck')

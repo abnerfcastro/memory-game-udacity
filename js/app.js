@@ -17,8 +17,55 @@ const deck = {
     },
     clearSelection: function() {
         this.selected.splice(0, 2);
+    },
+    countMoves: function() {
+        return this.matches + this.mismatches;
     }
 }
+
+const timer = {
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    stopped: true,
+    increment: function() {
+        if (this.stopped)
+            return;
+
+        this.seconds++;
+        if (this.seconds % 60 == 0) {
+            this.seconds = 0;
+            this.minutes++;
+            if (this.minutes % 60 == 0) {
+                this.minutes = 0;
+                this.hours++;
+            }
+        }
+    },
+    start: function() {
+        this.stopped = false;
+    },
+    stop: function() {
+        this.stopped = true;
+    },
+    reset: function() {
+        this.stop();
+        this.seconds = 0;
+        this.minutes = 0;
+        this.hours = 0;
+    },
+    getElapsedTimeInSeconds: function() {
+        return this.hours * 60 * 60 + this.minutes * 60 + this.seconds;
+    },
+    toString: function(short = true) {
+        let format = function(number) {
+            return number > 9 ? number : `0${number}`;
+        }
+        return `${!short ? format(this.hours) + ':' : ''}${format(this.minutes)}:${format(this.seconds)}`;
+    },
+}
+
+const scorePanelElement = document.getElementById('score-panel');
 
 /**
  * @description Get cards HTMLCollection and convert to Array
@@ -124,6 +171,8 @@ function checkForMatch() {
         }
 
         deck.clearSelection();
+
+        updateScorePanel();
     }
 
     if (deck.matches === deck.cards.length / 2) {
@@ -162,6 +211,40 @@ function buildCardElements() {
     }
 }
 
+function updateScorePanel() {
+    let moves = deck.countMoves();
+    scorePanelElement.children.namedItem('moves').textContent =
+        `${moves} ${moves === 1 ? 'Move' : 'Moves'}`;
+
+    switch (moves) {
+        case 10:
+            switchStarIcon(2);
+            break;
+        case 20:
+            switchStarIcon(1);
+            break;
+    }
+
+    function switchStarIcon(position) {
+        let starListElement = scorePanelElement.children.namedItem('stars');
+        starListElement.children[position].firstElementChild.className = 'fa fa-star-o';
+    }
+}
+
+function resetScorePanel() {
+    scorePanelElement.children.namedItem('moves').textContent = '0 Moves';
+
+    let starListElement = scorePanelElement.children.namedItem('stars');
+    for (let i = 0; i < starListElement.children.length; i++) {
+        starListElement.children[i].firstElementChild.className = 'fa fa-star';
+    }
+}
+
+function updateTimerElement() {
+    let timerElement = scorePanelElement.children.namedItem('timer');
+    timerElement.textContent = timer.toString();
+}
+
 /**
  * @description Handles click events for the cards
  * @param {object} event
@@ -170,6 +253,9 @@ function deckClickEventHandler(event) {
     const { target } = event;
 
     if (target.nodeName === 'LI' && !isCardRevealed(target)) {
+        if (timer.stopped)
+            timer.start();
+
         reveal(target);
 
         let index = cardElementsList.indexOf(target);
@@ -183,11 +269,13 @@ function deckClickEventHandler(event) {
  * @description Handles click events for restart button
  */
 function reset() {
+    timer.reset();
     deck.reset();
     cardElementsList.forEach((card, i) => {
         card.className = 'card';
         card.firstElementChild.className = `fa ${deck.cards[i]}`;
     });
+    resetScorePanel();
 }
 
 const cardElementsList = getCardElementsArray();
@@ -204,6 +292,11 @@ function init() {
 
     document.getElementById('btn-reset')
         .addEventListener('click', () => reset());
+
+    window.setInterval(() => {
+        timer.increment();
+        updateTimerElement();
+    }, 1000);
 }
 
 init();

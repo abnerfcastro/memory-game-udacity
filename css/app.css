@@ -147,7 +147,7 @@ html, body {
   display: inline-block;
 }
 
-.score-panel #restart__button {
+.score-panel #btn-reset {
   float: right;
   cursor: pointer;
 }

@@ -4,9 +4,12 @@ const icons = [
     'fa-cube', 'fa-leaf', 'fa-bicycle', 'fa-bomb'
 ];
 
-const cards = [...icons, ...icons];
-
-const selectedCards = [];
+const deck = {
+    cards: [...icons, ...icons],
+    selected: [],
+    matches: 0,
+    mismatches: 0
+}
 
 /**
  * @description Get cards HTMLCollection and convert to Array
@@ -15,23 +18,6 @@ const selectedCards = [];
 function getCardElementsArray() {
     let cardsHtmlCollection = document.getElementsByClassName('card');
     return cardsHtmlCollection ? Array.prototype.slice.call(cardsHtmlCollection) : null;
-}
-
-/**
- * @description Handles click events for the cards
- * @param {object} event
- */
-function deckClickEventHandler(event) {
-    const { target } = event;
-
-    if (target.nodeName === 'LI' && !isCardRevealed(target)) {
-        reveal(target);
-
-        let index = cardElementsList.indexOf(target);
-        selectedCards.push(index);
-
-        checkForMatch();
-    }
 }
 
 /**
@@ -110,32 +96,36 @@ function animate(element, animation, timeout) {
 }
 
 /**
- * @description Checks if both card elements on selectedCards match
+ * @description Checks if both card elements on deck.selected match
  */
 function checkForMatch() {
-    if (selectedCards.length === 2) {
-        let idx1 = selectedCards[0];
-        let idx2 = selectedCards[1];
+    if (deck.selected.length === 2) {
+        let idx1 = deck.selected[0];
+        let idx2 = deck.selected[1];
 
         let card1 = cardElementsList[idx1];
         let card2 = cardElementsList[idx2];
 
-        if (cards[idx1] === cards[idx2]) {
+        if (deck.cards[idx1] === deck.cards[idx2]) {
             match(card1, card2, 'tada');
+            deck.matches++;
         } else {
             hide(card1, card2);
+            deck.mismatches++;
         }
 
-        selectedCards.splice(0, 2);
+        deck.selected.splice(0, 2);
+    }
+
+    if (deck.matches === deck.cards.length / 2) {
+        // Bootstrap snippet to open modal
+        $('#victory-modal').modal();
     }
 }
 
 /**
  * @description Display the cards on the page
- * Shuffle function from http://stackoverflow.com/a/2450976
- *   - shuffle the list of cards using the provided "shuffle" method below
- *   - loop through each card and create its HTML
- *   - add each card's HTML to the page
+ *              Shuffle function from http://stackoverflow.com/a/2450976
  * @param {Array} array - The array to be shuffled
  */
 function shuffle(array) {
@@ -158,22 +148,43 @@ function shuffle(array) {
 function buildCardElements() {
     for (let i = 0; i < cardElementsList.length; i++) {
         const iTag = document.createElement('i');
-        iTag.className = `fa ${cards[i]}`;
+        iTag.className = `fa ${deck.cards[i]}`;
         cardElementsList[i].appendChild(iTag);
+    }
+}
+
+/**
+ * @description Handles click events for the cards
+ * @param {object} event
+ */
+function deckClickEventHandler(event) {
+    const { target } = event;
+
+    if (target.nodeName === 'LI' && !isCardRevealed(target)) {
+        reveal(target);
+
+        let index = cardElementsList.indexOf(target);
+        deck.selected.push(index);
+
+        checkForMatch();
     }
 }
 
 /**
  * @description Handles click events for restart button
  */
-function restartButtonClickEventHandler() {
-    shuffle(cards);
+function reset() {
+    shuffle(deck.cards);
     cardElementsList.forEach((card, i) => {
         card.className = 'card';
-        card.firstElementChild.className = `fa ${cards[i]}`;
+        card.firstElementChild.className = `fa ${deck.cards[i]}`;
     });
 
-    selectedCards.splice(0, 2);
+    deck.selected.splice(0, 2);
+    deck.matches = 0;
+    deck.mismatches = 0;
+
+    // $('#victory-modal').modal();
 }
 
 const cardElementsList = getCardElementsArray();
@@ -182,14 +193,14 @@ const cardElementsList = getCardElementsArray();
  * @description Initialize the game
  */
 function init() {
-    shuffle(cards);
+    shuffle(deck.cards);
     buildCardElements();
 
     document.getElementById('deck')
         .addEventListener('click', deckClickEventHandler);
 
-    document.getElementById('restart__button')
-        .addEventListener('click', restartButtonClickEventHandler);
+    document.getElementById('btn-reset')
+        .addEventListener('click', () => reset());
 }
 
 init();

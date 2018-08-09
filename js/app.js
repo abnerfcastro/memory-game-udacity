@@ -270,9 +270,6 @@ function updateScorePanel() {
     } else if ((moves >= 17 || timer.seconds > 30) && deck.stars == 2) {
         switchStarIcon(1);
         deck.stars--;
-    } else if ((moves >= 21 || timer.seconds > 35) && deck.stars == 1) {
-        switchStarIcon(0);
-        deck.stars--;
     }
 
     function switchStarIcon(position) {
@@ -347,7 +344,6 @@ function showVictoryScreen() {
     let moves = deck.countMoves();
 
     let starboardElement = document.querySelector('.starboard');
-    starboardElement.children[1].firstElementChild.className = deck.stars > 0 ? 'fa fa-star' : 'fa fa-star-o';
     starboardElement.children[1].firstElementChild.className = deck.stars > 1 ? 'fa fa-star' : 'fa fa-star-o';
     starboardElement.children[2].firstElementChild.className = deck.stars > 2 ? 'fa fa-star' : 'fa fa-star-o';
 

@@ -22,8 +22,8 @@ html, body {
 }
 
 #deck {
-  width: 660px;
-  min-height: 680px;
+  width: 495px;
+  min-height: 510px;
   background: linear-gradient(160deg, #02ccba 0%, #aa7ecd 100%);
   padding: 32px;
   border-radius: 10px;
@@ -36,8 +36,8 @@ html, body {
 }
 
 #deck .card {
-  height: 125px;
-  width: 125px;
+  height: 95px;
+  width: 95px;
   background: #2e3d49;
   font-size: 0;
   color: #ffffff;
@@ -56,15 +56,101 @@ html, body {
 }
 
 #deck .card.show {
-  font-size: 33px;
+  font-size: 28px;
 }
 
 #deck .card.match {
   cursor: default;
   background: #02ccba;
-  font-size: 33px;
+  font-size: 28px;
 }
 
+/*
+ * Styles for the Score Panel
+ */
+
+#score-panel {
+  text-align: left;
+  width: 345px;
+  margin-bottom: 10px;
+}
+
+#score-panel #stars {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  margin: 0 5px 0 0;
+}
+
+#score-panel #stars li {
+  list-style: none;
+  display: inline-block;
+}
+
+#score-panel #btn-reset {
+  float: right;
+  cursor: pointer;
+}
+
+#score-panel #moves,
+#score-panel #timer {
+  padding: 0 10px;
+}
+
+/*
+ * Styles for the Victory Screen
+ */
+
+.overlay {
+    height: 100vh;
+    width: 100vw;
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    /* background-color: rgba(95, 95, 95, 0.5); */
+    overflow-x: hidden;
+    overflow-y: hidden; /* Disable horizontal scroll */
+    /* transition: 0.5s; */
+    /* -webkit-transition: 0.5s; */
+}
+
+.overlay.open {
+  height: 100vh;
+}
+
+.overlay-content {
+  position: relative;
+  top: 25%; /* 25% from the top */
+  width: 100%; /* 100% width */
+  text-align: center; /* Centered text/links */
+  z-index: 2;
+  animation: bounceIn 0.75s;
+}
+
+.hidden {
+  display: none;
+}
+
+.overlay-content .starboard {
+  font-size: 30px;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  margin: 0 5px 0 0;
+}
+
+.overlay-content .starboard li {
+  list-style: none;
+  display: inline-block;
+}
+
+.overlay-content p {
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+/* ANIMATIONS */
 /* Adapted from Animate.css @ https://github.com/daneden/animate.css/blob/master/animate.css */
 
 @keyframes shake {
@@ -170,97 +256,6 @@ html, body {
     transform: scale3d(1, 1, 1);
   }
 }
-
-/*
- * Styles for the Score Panel
- */
-
-#score-panel {
-  text-align: left;
-  width: 345px;
-  margin-bottom: 10px;
-}
-
-#score-panel #stars {
-  margin: 0;
-  padding: 0;
-  display: inline-block;
-  margin: 0 5px 0 0;
-}
-
-#score-panel #stars li {
-  list-style: none;
-  display: inline-block;
-}
-
-#score-panel #btn-reset {
-  float: right;
-  cursor: pointer;
-}
-
-.overlay {
-    height: 100vh;
-    width: 100vw;
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    left: 0;
-    top: 0;
-    /* background-color: rgba(95, 95, 95, 0.5); */
-    overflow-x: hidden;
-    overflow-y: hidden; /* Disable horizontal scroll */
-    /* transition: 0.5s; */
-    /* -webkit-transition: 0.5s; */
-}
-
-.overlay.open {
-  height: 100vh;
-}
-
-.overlay-content {
-  position: relative;
-  top: 25%; /* 25% from the top */
-  width: 100%; /* 100% width */
-  text-align: center; /* Centered text/links */
-  z-index: 2;
-  animation: bounceIn 0.75s;
-}
-
-.hidden {
-  display: none;
-}
-
-.overlay-content .starboard {
-  font-size: 30px;
-  margin: 0;
-  padding: 0;
-  display: inline-block;
-  margin: 0 5px 0 0;
-}
-
-.overlay-content .starboard li {
-  list-style: none;
-  display: inline-block;
-}
-
-.overlay-content p {
-  margin-top: 20px;
-  margin-bottom: 30px;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* Checkmark Circle */
 /* Adapted from https://jsfiddle.net/Hybrid8287/gtb1avet/1/ */

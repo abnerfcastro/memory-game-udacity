@@ -44,9 +44,11 @@ const timer = {
     },
     start: function() {
         this.stopped = false;
+        this.interval = window.setInterval(timerIntervalHandler, 1000);
     },
     stop: function() {
         this.stopped = true;
+        window.clearInterval(this.interval);
     },
     reset: function() {
         this.stop();
@@ -63,9 +65,15 @@ const timer = {
         }
         return `${!short ? format(this.hours) + ':' : ''}${format(this.minutes)}:${format(this.seconds)}`;
     },
+    interval: null
 }
 
 const scorePanelElement = document.getElementById('score-panel');
+
+function timerIntervalHandler() {
+    timer.increment();
+    updateTimerElement();
+}
 
 /**
  * @description Get cards HTMLCollection and convert to Array
@@ -176,8 +184,8 @@ function checkForMatch() {
     }
 
     if (deck.matches === deck.cards.length / 2) {
-        // Bootstrap snippet to open modal
-        $('#victory-modal').modal();
+        timer.stop();
+        showVictoryScreen();
     }
 }
 
@@ -238,11 +246,14 @@ function resetScorePanel() {
     for (let i = 0; i < starListElement.children.length; i++) {
         starListElement.children[i].firstElementChild.className = 'fa fa-star';
     }
+
+    let timerElement = scorePanelElement.children.namedItem('timer');
+    timerElement.textContent = '';
 }
 
 function updateTimerElement() {
     let timerElement = scorePanelElement.children.namedItem('timer');
-    timerElement.textContent = timer.toString();
+    timerElement.textContent = timer.stopped ? '' : timer.toString();
 }
 
 /**
@@ -251,7 +262,6 @@ function updateTimerElement() {
  */
 function deckClickEventHandler(event) {
     const { target } = event;
-
     if (target.nodeName === 'LI' && !isCardRevealed(target)) {
         if (timer.stopped)
             timer.start();
@@ -278,6 +288,37 @@ function reset() {
     resetScorePanel();
 }
 
+function showVictoryScreen() {
+    document.querySelector('.container').classList.toggle('hidden');
+    document.getElementById('victory-screen').classList.toggle('hidden');
+
+    let moves = deck.countMoves();
+
+    let starboardElement = document.querySelector('.starboard');
+    starboardElement.children[1].firstElementChild.className = moves >= 20 ? 'fa fa-star-o' : 'fa fa-star';
+    starboardElement.children[2].firstElementChild.className = moves >= 10 ? 'fa fa-star-o' : 'fa fa-star';
+
+    // Assemble p.stats-message content, I got a little carried away here :)
+    let message = `It took you ${moves} moves`;
+    message += (timer.hours && !timer.minutes && !timer.seconds) ||
+               (!timer.hours && timer.minutes && !timer.seconds) ||
+               (!timer.hours && !timer.minutes && timer.seconds) ? ' and ' : ', ';
+    if (timer.hours)
+        message += `${timer.hours} ${timer.hours == 1 ? 'hour' : 'hours'}${!timer.minutes && !timer.seconds ? '' : timer.minutes && timer.seconds ? ', ' : ' and '}`;
+    if (timer.minutes)
+        message += `${timer.minutes} ${timer.minutes == 1 ? 'minute' : 'minutes'}${timer.seconds ? ' and ' : ''}`;
+    if (timer.seconds)
+        message += `${timer.seconds} ${timer.seconds == 1 ? 'second' : 'seconds'}`;
+
+    document.querySelector('.stats-message').textContent = message;
+
+}
+
+function hideVictoryScreen() {
+    document.querySelector('.container').classList.toggle('hidden');
+    document.getElementById('victory-screen').classList.toggle('hidden');
+}
+
 const cardElementsList = getCardElementsArray();
 
 /**
@@ -293,10 +334,11 @@ function init() {
     document.getElementById('btn-reset')
         .addEventListener('click', () => reset());
 
-    window.setInterval(() => {
-        timer.increment();
-        updateTimerElement();
-    }, 1000);
+    document.getElementById('btn-restart')
+        .addEventListener('click', () => {
+            hideVictoryScreen();
+            reset();
+        });
 }
 
 init();

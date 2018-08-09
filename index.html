@@ -50,20 +50,18 @@
             </ul>
         </div>
 
-        <div class="modal fade" id="victory-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title">Congratulations!</h1>
-                    </div>
-                    <div class="modal-body">
-                        <p>You took <span class="modal-time">XX:XX:XX</span> to win the game.</p>
-                        <p>You've scored <span class="modal-stars">X</span> stars.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary">Play again</button>
-                    </div>
-                </div>
+        <div id="victory-screen" class="overlay hidden">
+            <div class="overlay-content">
+                <!-- Borrowed from https://jsfiddle.net/Hybrid8287/gtb1avet/1/ -->
+                <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/><path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg>
+                <h1>Congratulations! You Won!</h1>
+                <ul class="starboard">
+                    <li><i class="fa fa-star"></i></li>
+                    <li><i class="fa fa-star"></i></li>
+                    <li><i class="fa fa-star"></i></li>
+                </ul>
+                <p class="stats-message">It took you 17 moves, 2 minutes and 30 seconds</p>
+                <div id="btn-restart" class="btn btn-success">Play Again!</div>
             </div>
         </div>
 

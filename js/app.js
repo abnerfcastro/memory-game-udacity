@@ -13,6 +13,7 @@ const deck = {
     selected: [],
     matches: 0,
     mismatches: 0,
+    stars: 3,
 
     /**
      * @description Shuffles cards and resets counters and clears selected cards
@@ -21,6 +22,7 @@ const deck = {
         shuffle(this.cards);
         this.matches = 0;
         this.mismatches = 0;
+        this.stars = 3;
         this.clearSelection();
     },
 
@@ -120,6 +122,7 @@ const scorePanelElement = document.getElementById('score-panel');
 function timerIntervalHandler() {
     timer.increment();
     updateTimerElement();
+    updateScorePanel();
 }
 
 /**
@@ -261,13 +264,15 @@ function updateScorePanel() {
     scorePanelElement.children.namedItem('moves').textContent =
         `${moves} ${moves === 1 ? 'Move' : 'Moves'}`;
 
-    switch (moves) {
-        case 10:
-            switchStarIcon(2);
-            break;
-        case 20:
-            switchStarIcon(1);
-            break;
+    if ((moves >= 13 || timer.seconds > 25) && deck.stars == 3) {
+        switchStarIcon(2);
+        deck.stars--;
+    } else if ((moves >= 17 || timer.seconds > 30) && deck.stars == 2) {
+        switchStarIcon(1);
+        deck.stars--;
+    } else if ((moves >= 21 || timer.seconds > 35) && deck.stars == 1) {
+        switchStarIcon(0);
+        deck.stars--;
     }
 
     function switchStarIcon(position) {
@@ -342,8 +347,9 @@ function showVictoryScreen() {
     let moves = deck.countMoves();
 
     let starboardElement = document.querySelector('.starboard');
-    starboardElement.children[1].firstElementChild.className = moves >= 20 ? 'fa fa-star-o' : 'fa fa-star';
-    starboardElement.children[2].firstElementChild.className = moves >= 10 ? 'fa fa-star-o' : 'fa fa-star';
+    starboardElement.children[1].firstElementChild.className = deck.stars > 0 ? 'fa fa-star' : 'fa fa-star-o';
+    starboardElement.children[1].firstElementChild.className = deck.stars > 1 ? 'fa fa-star' : 'fa fa-star-o';
+    starboardElement.children[2].firstElementChild.className = deck.stars > 2 ? 'fa fa-star' : 'fa fa-star-o';
 
     // Assemble p.stats-message content, I got a little carried away here :)
     let message = `It took you ${moves} moves`;

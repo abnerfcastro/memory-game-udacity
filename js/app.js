@@ -9,15 +9,28 @@ const deck = {
     selected: [],
     matches: 0,
     mismatches: 0,
+
+    /**
+     * @description Shuffles cards and resets counters and clears selected cards
+     */
     reset: function() {
         shuffle(this.cards);
         this.matches = 0;
         this.mismatches = 0;
         this.clearSelection();
     },
+
+    /**
+     * @description Empties selected array
+     */
     clearSelection: function() {
         this.selected.splice(0, 2);
     },
+
+    /**
+     * @description Yields number of moves played by the user
+     * @returns Sum of matches and mismatches
+     */
     countMoves: function() {
         return this.matches + this.mismatches;
     }
@@ -28,6 +41,10 @@ const timer = {
     minutes: 0,
     seconds: 0,
     stopped: true,
+
+    /**
+     * @description Increments seconds, minutes and hours if timer is not stopped
+     */
     increment: function() {
         if (this.stopped)
             return;
@@ -42,23 +59,43 @@ const timer = {
             }
         }
     },
+
+    /**
+     * @description Starts timer and sets interval function
+     */
     start: function() {
         this.stopped = false;
         this.interval = window.setInterval(timerIntervalHandler, 1000);
     },
+
+    /**
+     * @description Stops timer and clears interval function
+     */
     stop: function() {
         this.stopped = true;
         window.clearInterval(this.interval);
     },
+
+    /**
+     * @description Stops timer and resets attributes to 0
+     */
     reset: function() {
         this.stop();
         this.seconds = 0;
         this.minutes = 0;
         this.hours = 0;
     },
+
+    /**
+     * @description Yields elapsed time in seconds
+     */
     getElapsedTimeInSeconds: function() {
         return this.hours * 60 * 60 + this.minutes * 60 + this.seconds;
     },
+
+    /**
+     * @description Prints time in XX:XX:XX format
+     */
     toString: function(short = true) {
         let format = function(number) {
             return number > 9 ? number : `0${number}`;
@@ -70,6 +107,9 @@ const timer = {
 
 const scorePanelElement = document.getElementById('score-panel');
 
+/**
+ * @description Handles the interval for timer: increments by each second and updates timer element
+ */
 function timerIntervalHandler() {
     timer.increment();
     updateTimerElement();
@@ -94,7 +134,7 @@ function isCardRevealed(card) {
 
 /**
  * @description Applies classes .open and .show to reveal the cards
- * @param {Element} args The card elements to be revealed
+ * @param {Element} elements The card elements to be revealed
  */
 function reveal(...elements) {
     for (let i = 0; i < elements.length; i++) {
@@ -106,7 +146,7 @@ function reveal(...elements) {
 
 /**
  * @description Removes classes .open and .show to hide the card elements
- * @param {Element} args The card elements to be hidden
+ * @param {Element} elements The card elements to be hidden
  */
 function hide(...elements) {
     elements.forEach(function(e) {
@@ -209,16 +249,8 @@ function shuffle(array) {
 }
 
 /**
- * @description Build card elements with an i tag
+ * @description Updates score panel (stars and moves)
  */
-function buildCardElements() {
-    for (let i = 0; i < cardElementsList.length; i++) {
-        const iTag = document.createElement('i');
-        iTag.className = `fa ${deck.cards[i]}`;
-        cardElementsList[i].appendChild(iTag);
-    }
-}
-
 function updateScorePanel() {
     let moves = deck.countMoves();
     scorePanelElement.children.namedItem('moves').textContent =
@@ -239,6 +271,9 @@ function updateScorePanel() {
     }
 }
 
+/**
+ * @description Resets score panel (stars, moves and timer)
+ */
 function resetScorePanel() {
     scorePanelElement.children.namedItem('moves').textContent = '0 Moves';
 
@@ -251,6 +286,9 @@ function resetScorePanel() {
     timerElement.textContent = '';
 }
 
+/**
+ * @description Refreshs timer on game view
+ */
 function updateTimerElement() {
     let timerElement = scorePanelElement.children.namedItem('timer');
     timerElement.textContent = timer.stopped ? '' : timer.toString();
@@ -262,6 +300,7 @@ function updateTimerElement() {
  */
 function deckClickEventHandler(event) {
     const { target } = event;
+
     if (target.nodeName === 'LI' && !isCardRevealed(target)) {
         if (timer.stopped)
             timer.start();
@@ -276,7 +315,7 @@ function deckClickEventHandler(event) {
 }
 
 /**
- * @description Handles click events for restart button
+ * @description Resets timer, deck properties, score panel and card elements
  */
 function reset() {
     timer.reset();
@@ -288,6 +327,9 @@ function reset() {
     resetScorePanel();
 }
 
+/**
+ * @description Shows victory screen and hides game view
+ */
 function showVictoryScreen() {
     document.querySelector('.container').classList.toggle('hidden');
     document.getElementById('victory-screen').classList.toggle('hidden');
@@ -303,20 +345,35 @@ function showVictoryScreen() {
     message += (timer.hours && !timer.minutes && !timer.seconds) ||
                (!timer.hours && timer.minutes && !timer.seconds) ||
                (!timer.hours && !timer.minutes && timer.seconds) ? ' and ' : ', ';
-    if (timer.hours)
-        message += `${timer.hours} ${timer.hours == 1 ? 'hour' : 'hours'}${!timer.minutes && !timer.seconds ? '' : timer.minutes && timer.seconds ? ', ' : ' and '}`;
+    if (timer.hours) {
+        message += `${timer.hours} ${timer.hours == 1 ? 'hour' : 'hours'}`;
+        message += `${!timer.minutes && !timer.seconds ? '' : timer.minutes && timer.seconds ? ', ' : ' and '}`
+    }
     if (timer.minutes)
         message += `${timer.minutes} ${timer.minutes == 1 ? 'minute' : 'minutes'}${timer.seconds ? ' and ' : ''}`;
     if (timer.seconds)
         message += `${timer.seconds} ${timer.seconds == 1 ? 'second' : 'seconds'}`;
 
     document.querySelector('.stats-message').textContent = message;
-
 }
 
+/**
+ * @description Hides the victory screen and brings back the game view
+ */
 function hideVictoryScreen() {
     document.querySelector('.container').classList.toggle('hidden');
     document.getElementById('victory-screen').classList.toggle('hidden');
+}
+
+/**
+ * @description Build card elements with an i tag, only called during init phase
+ */
+function buildCardElements() {
+    for (let i = 0; i < cardElementsList.length; i++) {
+        const iTag = document.createElement('i');
+        iTag.className = `fa ${deck.cards[i]}`;
+        cardElementsList[i].appendChild(iTag);
+    }
 }
 
 const cardElementsList = getCardElementsArray();

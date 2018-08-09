@@ -1,3 +1,7 @@
+/**
+ * @author Abner Castro
+ * @description Memory/Matching Game logic for Udacity Nanodegree Project
+ */
 
 const icons = [
     'fa-diamond', 'fa-paper-plane-o', 'fa-anchor', 'fa-bolt',
@@ -152,11 +156,9 @@ function reveal(...elements) {
  * @param {Element} elements The card elements to be hidden
  */
 function hide(...elements) {
-    elements.forEach(function(e) {
-        animate(e, 'shake');
-    });
+    elements.forEach(e => animate(e, 'shake'));
 
-    window.setTimeout(function () {
+    window.setTimeout(() => {
         for (let i = 0; i < elements.length; i++) {
             if (elements[i] && elements[i].classList) {
                 elements[i].classList.remove('open', 'show', 'shake');
@@ -195,7 +197,7 @@ function animate(element, animation, timeout) {
         element.classList.add(animation);
 
         if (timeout) {
-            window.setTimeout(function() {
+            window.setTimeout(() => {
                 element.classList.remove(animation);
             }, timeout)
         }

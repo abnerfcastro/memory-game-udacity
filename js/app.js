@@ -88,20 +88,23 @@ const timer = {
 
     /**
      * @description Yields elapsed time in seconds
+     * @returns Total time in seconds
      */
     getElapsedTimeInSeconds: function() {
         return this.hours * 60 * 60 + this.minutes * 60 + this.seconds;
     },
 
     /**
-     * @description Prints time in XX:XX:XX format
+     * @description Prints time in hh:mm:ss format or mm:ss if hours equals 0
+     * @returns String representing elapsed time
      */
-    toString: function(short = true) {
+    toString: function() {
         let format = function(number) {
             return number > 9 ? number : `0${number}`;
         }
-        return `${!short ? format(this.hours) + ':' : ''}${format(this.minutes)}:${format(this.seconds)}`;
+        return `${this.hours ? format(this.hours) + ':' : ''}${format(this.minutes)}:${format(this.seconds)}`;
     },
+
     interval: null
 }
 
@@ -164,20 +167,20 @@ function hide(...elements) {
 
 /**
  * @description Applies .match class for both card elements
- * @param {Element} firstCard
- * @param {Element} secondCard
+ * @param {Element} first card to be matched
+ * @param {Element} second card to be matched
  * @param {string} animation the animation for the matching effect
  */
-function match(firstCard, secondCard, animation) {
-    if (firstCard && firstCard.classList && secondCard && secondCard.classList) {
+function match(first, second, animation) {
+    if (first && first.classList && second && second.classList) {
         // when provided, run with animation
         if (animation) {
-            animate(firstCard, animation, 1000);
-            animate(secondCard, animation, 1000);
+            animate(first, animation, 1000);
+            animate(second, animation, 1000);
         }
 
-        firstCard.classList.add('match');
-        secondCard.classList.add('match');
+        first.classList.add('match');
+        second.classList.add('match');
     }
 }
 

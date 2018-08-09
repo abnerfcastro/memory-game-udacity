@@ -159,12 +159,15 @@ function reveal(...elements) {
  * @param {Element} elements The card elements to be hidden
  */
 function hide(...elements) {
-    elements.forEach(e => animate(e, 'shake'));
+    elements.forEach(e => {
+        e.classList.add('mismatch');
+        animate(e, 'shake');
+    });
 
     window.setTimeout(() => {
         for (let i = 0; i < elements.length; i++) {
             if (elements[i] && elements[i].classList) {
-                elements[i].classList.remove('open', 'show', 'shake');
+                elements[i].classList.remove('open', 'show', 'mismatch', 'shake');
             }
         }
     }, 700);

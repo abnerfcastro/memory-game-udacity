@@ -65,6 +65,10 @@ html, body {
   font-size: 28px;
 }
 
+#deck .card.mismatch {
+  background: #ff4949 ;
+}
+
 /*
  * Styles for the Score Panel
  */

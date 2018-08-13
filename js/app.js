@@ -40,7 +40,7 @@ const deck = {
     countMoves: function() {
         return this.matches + this.mismatches;
     }
-}
+};
 
 const timer = {
     hours: 0,
@@ -112,7 +112,7 @@ const timer = {
     },
 
     interval: null
-}
+};
 
 const scorePanelElement = document.getElementById('score-panel');
 
